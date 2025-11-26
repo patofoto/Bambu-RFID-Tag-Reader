@@ -6,3 +6,6 @@
 
 # WiFi credentials - keep private
 src/config/wifi_credentials.h
+
+# MQTT credentials - keep private
+src/config/mqtt_credentials.h
