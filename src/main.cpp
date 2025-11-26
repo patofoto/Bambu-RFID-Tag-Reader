@@ -7,6 +7,7 @@
 #include "config.h"
 #include "display.h"
 #include "rfid.h"
+#include "wifi_manager.h"
 
 // Create MFRC522 instance
 MFRC522 mfrc522(SS_PIN, RST_PIN);
@@ -27,11 +28,17 @@ void setup() {
   // Initialize display
   initDisplay(tft);
   
+  // Initialize WiFi
+  initWiFi();
+  
   // Initialize RFID reader
   initRFID(mfrc522);
 }
 
 void loop() {
+  // Handle WiFi reconnection if needed
+  handleWiFi();
+  
   MFRC522::Uid uid;
   
   // Try to read RFID tag
