@@ -24,20 +24,20 @@ TFT_eSPI tft = TFT_eSPI();
 void updateDisplay(MFRC522::Uid uid) {
   tft.fillScreen(TFT_BLACK);
   
-  // Title
+  // Title - medium font (font 4)
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.setTextSize(1);
   tft.drawString("Bambu RFID Reader", 5, 5, 4);
   
   // Draw a line separator
-  tft.drawLine(0, 30, tft.width(), 30, TFT_WHITE);
+  tft.drawLine(0, 35, tft.width(), 35, TFT_WHITE);
   
-  int yPos = 40;
-  int lineHeight = 20;
+  int yPos = 50;
+  int lineHeight = 35;
   
-  // UID Hex format
+  // UID Hex format - font 4
   tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-  tft.drawString("Hex:", 5, yPos, 2);
+  tft.drawString("Hex:", 5, yPos, 4);
   String hexStr = "";
   for (byte i = 0; i < uid.size; i++) {
     if (uid.uidByte[i] < 0x10) {
@@ -49,12 +49,12 @@ void updateDisplay(MFRC522::Uid uid) {
     }
   }
   hexStr.toUpperCase();
-  tft.drawString(hexStr, 50, yPos, 2);
+  tft.drawString(hexStr, 70, yPos, 4);
   yPos += lineHeight;
   
-  // UID Decimal format
+  // UID Decimal format - font 4
   tft.setTextColor(TFT_CYAN, TFT_BLACK);
-  tft.drawString("Decimal:", 5, yPos, 2);
+  tft.drawString("Decimal:", 5, yPos, 4);
   String decStr = "";
   for (byte i = 0; i < uid.size; i++) {
     decStr += String(uid.uidByte[i]);
@@ -62,47 +62,17 @@ void updateDisplay(MFRC522::Uid uid) {
       decStr += ":";
     }
   }
-  tft.drawString(decStr, 80, yPos, 2);
+  tft.drawString(decStr, 100, yPos, 4);
   yPos += lineHeight;
   
-  // Single decimal number
+  // Single decimal number - font 4
   unsigned long uidDecimal = 0;
   for (byte i = 0; i < uid.size; i++) {
     uidDecimal = uidDecimal * 256 + uid.uidByte[i];
   }
   tft.setTextColor(TFT_GREEN, TFT_BLACK);
-  tft.drawString("UID Number:", 5, yPos, 2);
-  tft.drawString(String(uidDecimal), 100, yPos, 2);
-  yPos += lineHeight;
-  
-  // Raw bytes
-  tft.setTextColor(TFT_MAGENTA, TFT_BLACK);
-  tft.drawString("Raw Bytes:", 5, yPos, 2);
-  String rawStr = "";
-  for (byte i = 0; i < uid.size; i++) {
-    rawStr += "0x";
-    if (uid.uidByte[i] < 0x10) {
-      rawStr += "0";
-    }
-    rawStr += String(uid.uidByte[i], HEX);
-    if (i < uid.size - 1) {
-      rawStr += ", ";
-    }
-  }
-  rawStr.toUpperCase();
-  // Split raw bytes if too long for one line
-  if (rawStr.length() > 25) {
-    int splitPos = rawStr.lastIndexOf(", ", 25);
-    if (splitPos > 0) {
-      tft.drawString(rawStr.substring(0, splitPos), 90, yPos, 2);
-      yPos += lineHeight;
-      tft.drawString(rawStr.substring(splitPos + 2), 90, yPos, 2);
-    } else {
-      tft.drawString(rawStr, 90, yPos, 2);
-    }
-  } else {
-    tft.drawString(rawStr, 90, yPos, 2);
-  }
+  tft.drawString("UID:", 5, yPos, 4);
+  tft.drawString(String(uidDecimal), 70, yPos, 4);
 }
 
 void setup() {
@@ -139,9 +109,9 @@ void setup() {
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.setTextSize(1);
   tft.drawString("Bambu RFID Reader", 5, 5, 4);
-  tft.drawLine(0, 30, tft.width(), 30, TFT_WHITE);
+  tft.drawLine(0, 35, tft.width(), 35, TFT_WHITE);
   tft.setTextColor(TFT_CYAN, TFT_BLACK);
-  tft.drawString("Waiting for tag...", 5, 50, 2);
+  tft.drawString("Waiting for tag...", 5, 50, 4);
   
   // Initialize SPI bus
   // ESP32-S3 default SPI pins (VSPI) match exposed pins: MOSI=GPIO11, MISO=GPIO13, SCK=GPIO12
