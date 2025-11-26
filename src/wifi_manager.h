@@ -4,9 +4,10 @@
 
 // Forward declarations
 class IPAddress;
+class TFT_eSPI;
 
 // WiFi connection functions
-bool initWiFi();
+bool initWiFi(TFT_eSPI* tft = nullptr);
 bool isWiFiConnected();
 void handleWiFi();
 String getWiFiSSID();

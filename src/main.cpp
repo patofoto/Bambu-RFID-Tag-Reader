@@ -28,8 +28,8 @@ void setup() {
   // Initialize display
   initDisplay(tft);
   
-  // Initialize WiFi
-  initWiFi();
+  // Initialize WiFi (pass display for progress updates)
+  initWiFi(&tft);
   
   // Initialize RFID reader
   initRFID(mfrc522);
@@ -46,8 +46,8 @@ void loop() {
     // Print to serial
     printUIDToSerial(uid);
     
-    // Update display
-    updateDisplay(tft, uid);
+    // Update display with tag data and IP address
+    updateDisplay(tft, uid, getWiFiIP());
     
     // Small delay before next read
     delay(1000);

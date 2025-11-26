@@ -1,12 +1,19 @@
 #include <Arduino.h>
 #include <WiFi.h>
+#include <TFT_eSPI.h>
 #include "wifi_manager.h"
 #include "config/wifi_credentials.h"
+#include "display.h"
 
 // Initialize WiFi connection
-bool initWiFi() {
+bool initWiFi(TFT_eSPI* tft) {
   Serial.print("Connecting to WiFi: ");
   Serial.println(WIFI_SSID);
+  
+  // Show connecting message on display
+  if (tft != nullptr) {
+    showWiFiConnecting(*tft, WIFI_SSID, 0);
+  }
   
   WiFi.mode(WIFI_STA);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
@@ -17,6 +24,11 @@ bool initWiFi() {
     delay(500);
     Serial.print(".");
     attempts++;
+    
+    // Update display with progress
+    if (tft != nullptr) {
+      showWiFiConnecting(*tft, WIFI_SSID, attempts);
+    }
   }
   
   if (WiFi.status() == WL_CONNECTED) {
@@ -24,10 +36,24 @@ bool initWiFi() {
     Serial.println("WiFi connected!");
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
+    
+    // Show success on display
+    if (tft != nullptr) {
+      showWiFiConnected(*tft, WiFi.localIP());
+      delay(2000); // Show success message for 2 seconds
+    }
+    
     return true;
   } else {
     Serial.println();
     Serial.println("WiFi connection failed!");
+    
+    // Show failure on display
+    if (tft != nullptr) {
+      showWiFiFailed(*tft);
+      delay(2000); // Show failure message for 2 seconds
+    }
+    
     return false;
   }
 }
