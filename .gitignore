@@ -3,3 +3,9 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+
+# WiFi credentials - keep private
+src/config/wifi_credentials.h
+
+# MQTT credentials - keep private
+src/config/mqtt_credentials.h
