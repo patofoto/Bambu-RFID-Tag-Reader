@@ -90,7 +90,7 @@ void showWiFiFailed(TFT_eSPI& tft) {
 }
 
 // Update display with RFID tag information
-void updateDisplay(TFT_eSPI& tft, MFRC522::Uid uid, IPAddress ip) {
+void updateDisplay(TFT_eSPI& tft, MFRC522::Uid uid) {
   tft.fillScreen(TFT_BLACK);
   
   // Title - medium font (font 4)
