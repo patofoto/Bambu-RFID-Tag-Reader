@@ -57,8 +57,8 @@ void loop() {
     // Print to serial
     printUIDToSerial(uid);
     
-    // Update display with tag data and IP address
-    updateDisplay(tft, uid, getWiFiIP());
+    // Update display with tag data
+    updateDisplay(tft, uid);
     
     // Publish UID to MQTT (if connected)
     if (isWiFiConnected() && isMQTTConnected()) {

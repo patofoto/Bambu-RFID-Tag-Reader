@@ -11,7 +11,7 @@ void initDisplay(TFT_eSPI& tft) {
   
   // Initialize display
   tft.init();
-  tft.setRotation(1); // Landscape orientation (320x170)
+  tft.setRotation(3); // Landscape orientation rotated 180 degrees (320x170)
   tft.setSwapBytes(true);
   tft.fillScreen(TFT_BLACK);
   
@@ -90,48 +90,26 @@ void showWiFiFailed(TFT_eSPI& tft) {
 }
 
 // Update display with RFID tag information
-void updateDisplay(TFT_eSPI& tft, MFRC522::Uid uid, IPAddress ip) {
+void updateDisplay(TFT_eSPI& tft, MFRC522::Uid uid) {
   tft.fillScreen(TFT_BLACK);
   
   // Title - medium font (font 4)
   tft.setTextColor(TFT_WHITE, TFT_BLACK);
   tft.setTextSize(1);
-  tft.drawString("Bambu RFID Reader", 5, 5, 4);
+  tft.drawString("Bambu Spool", 5, 5, 4);
   
   // Draw a line separator
   tft.drawLine(0, 35, tft.width(), 35, TFT_WHITE);
   
-  int yPos = 50;
-  int lineHeight = 35;
-  
-  // UID Decimal format - font 4
-  tft.setTextColor(TFT_CYAN, TFT_BLACK);
-  tft.drawString("Decimal:", 5, yPos, 4);
-  String decStr = "";
-  for (byte i = 0; i < uid.size; i++) {
-    decStr += String(uid.uidByte[i]);
-    if (i < uid.size - 1) {
-      decStr += ":";
-    }
-  }
-  tft.drawString(decStr, 100, yPos, 4);
-  yPos += lineHeight;
-  
-  // Single decimal number - font 4
+  // Calculate UID number
   unsigned long uidDecimal = 0;
   for (byte i = 0; i < uid.size; i++) {
     uidDecimal = uidDecimal * 256 + uid.uidByte[i];
   }
-  tft.setTextColor(TFT_GREEN, TFT_BLACK);
-  tft.drawString("UID:", 5, yPos, 4);
-  tft.drawString(String(uidDecimal), 70, yPos, 4);
-  yPos += lineHeight;
   
-  // IP Address - font 4
-  if (ip != IPAddress(0, 0, 0, 0)) {
-    tft.setTextColor(TFT_YELLOW, TFT_BLACK);
-    tft.drawString("IP:", 5, yPos, 4);
-    tft.drawString(ip.toString(), 70, yPos, 4);
-  }
+  // Display UID in large font centered
+  tft.setTextColor(TFT_GREEN, TFT_BLACK);
+  tft.drawString("UID:", 5, 60, 4);
+  tft.drawString(String(uidDecimal), 5, 95, 6);
 }
 

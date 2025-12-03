@@ -8,7 +8,7 @@
 void initDisplay(TFT_eSPI& tft);
 
 // Display update functions
-void updateDisplay(TFT_eSPI& tft, MFRC522::Uid uid, IPAddress ip = IPAddress(0, 0, 0, 0));
+void updateDisplay(TFT_eSPI& tft, MFRC522::Uid uid);
 void showWaitingMessage(TFT_eSPI& tft);
 void showWiFiConnecting(TFT_eSPI& tft, const char* ssid, int attempts);
 void showWiFiConnected(TFT_eSPI& tft, IPAddress ip);
