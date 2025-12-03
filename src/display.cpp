@@ -11,7 +11,7 @@ void initDisplay(TFT_eSPI& tft) {
   
   // Initialize display
   tft.init();
-  tft.setRotation(1); // Landscape orientation (320x170)
+  tft.setRotation(3); // Landscape orientation rotated 180 degrees (320x170)
   tft.setSwapBytes(true);
   tft.fillScreen(TFT_BLACK);
   
