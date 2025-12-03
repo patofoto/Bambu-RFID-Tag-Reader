@@ -25,10 +25,10 @@ Connect the RFID-RC522 module to the LilyGO T-Display-S3 as follows:
 
 | RC522 Pin | LilyGO T-Display-S3 Pin | Notes |
 |-----------|------------------------|-------|
-| SDA (SS)  | GPIO13 (P1 header, SPI_Q) | Slave Select |
+| SDA (SS)  | GPIO10 (P1 header, SPI_CS) | Slave Select |
 | SCK       | GPIO12 (P1 header, SPI_CLK) | SPI Clock |
 | MOSI      | GPIO11 (P1 header, SPI_D) | SPI Data Out |
-| MISO      | GPIO10 (P1 header, SPI_CS) | SPI Data In |
+| MISO      | GPIO13 (P1 header, SPI_Q) | SPI Data In |
 | RST       | GPIO21 (P2 header) | Reset pin |
 | 3.3V      | 3.3V (P1 or P2 header) | Power |
 | GND       | GND (P1 or P2 header) | Ground |
@@ -160,7 +160,9 @@ Bambu-RFID-Tag-Reader/
 
 The pin configuration can be modified in `src/config.h`:
 - `RST_PIN`: RC522 reset pin (default: GPIO21)
-- `SS_PIN`: RC522 slave select pin (default: GPIO13)
+- `SS_PIN`: RC522 slave select pin (default: GPIO10)
+
+**Note:** The SPI hardware pins (MOSI, MISO, SCK) must remain on their designated GPIO pins for the RC522 to work properly.
 
 ### Display Settings
 
