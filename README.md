@@ -5,8 +5,11 @@ A PlatformIO project for reading RFID tags from Bambu Labs filament spools using
 ## Features
 
 - **RFID Tag Reading**: Reads MIFARE Classic and other compatible RFID tags
-- **Multiple UID Formats**: Displays UID in hex, decimal, single decimal number, and raw bytes
+- **Multiple UID Formats**: Displays UID in decimal, single decimal number, and hex (in serial)
 - **TFT Display**: Shows tag information on the integrated 1.9" ST7789 display (170x320 pixels)
+- **WiFi Connectivity**: Connects to WiFi with connection progress display
+- **MQTT Publishing**: Publishes UID data to MQTT broker in JSON format
+- **Modular Code**: Organized into separate modules for easy maintenance
 - **Serial Output**: Also outputs tag information to serial monitor for debugging
 - **Landscape Display**: Optimized for landscape orientation (320x170)
 
@@ -22,10 +25,10 @@ Connect the RFID-RC522 module to the LilyGO T-Display-S3 as follows:
 
 | RC522 Pin | LilyGO T-Display-S3 Pin | Notes |
 |-----------|------------------------|-------|
-| SDA (SS)  | GPIO10 (P1 header, SPI_CS) | Slave Select |
+| SDA (SS)  | GPIO13 (P1 header, SPI_Q) | Slave Select |
 | SCK       | GPIO12 (P1 header, SPI_CLK) | SPI Clock |
 | MOSI      | GPIO11 (P1 header, SPI_D) | SPI Data Out |
-| MISO      | GPIO13 (P1 header, SPI_Q) | SPI Data In |
+| MISO      | GPIO10 (P1 header, SPI_CS) | SPI Data In |
 | RST       | GPIO21 (P2 header) | Reset pin |
 | 3.3V      | 3.3V (P1 or P2 header) | Power |
 | GND       | GND (P1 or P2 header) | Ground |
@@ -87,10 +90,18 @@ When a tag is detected, the display shows:
 ```
 Bambu RFID Reader
 ─────────────────
-Hex: AA:BB:CC:DD
 Decimal: 170:187:204:221
-UID Number: 2864434397
-Raw Bytes: 0xAA, 0xBB, 0xCC, 0xDD
+UID: 2864434397
+IP: 192.168.1.100
+```
+
+During WiFi connection:
+```
+Bambu RFID Reader
+─────────────────
+Connecting to WiFi...
+YourNetworkName
+Attempts: 5/30...
 ```
 
 ## Project Structure
@@ -100,7 +111,17 @@ Bambu-RFID-Tag-Reader/
 ├── platformio.ini          # PlatformIO configuration
 ├── src/
 │   ├── main.cpp            # Main application code
-│   └── pin_config.h        # Pin definitions for the board
+│   ├── pin_config.h        # Board pin definitions
+│   ├── config.h            # RFID pin configuration
+│   ├── config/             # Credential files (gitignored)
+│   │   ├── wifi_credentials.h
+│   │   ├── wifi_credentials.h.example
+│   │   ├── mqtt_credentials.h
+│   │   └── mqtt_credentials.h.example
+│   ├── display.h/cpp       # Display module
+│   ├── rfid.h/cpp          # RFID module
+│   ├── wifi_manager.h/cpp  # WiFi module
+│   └── mqtt_manager.h/cpp  # MQTT module
 ├── include/                # Header files (if needed)
 ├── lib/                    # Local libraries (if needed)
 └── README.md               # This file
@@ -108,11 +129,38 @@ Bambu-RFID-Tag-Reader/
 
 ## Configuration
 
+### WiFi Configuration
+
+1. Copy the WiFi credentials template:
+   ```bash
+   cp src/config/wifi_credentials.h.example src/config/wifi_credentials.h
+   ```
+
+2. Edit `src/config/wifi_credentials.h` with your WiFi details:
+   ```cpp
+   #define WIFI_SSID "your_wifi_ssid"
+   #define WIFI_PASSWORD "your_wifi_password"
+   ```
+
+### MQTT Configuration
+
+1. Copy the MQTT credentials template:
+   ```bash
+   cp src/config/mqtt_credentials.h.example src/config/mqtt_credentials.h
+   ```
+
+2. Edit `src/config/mqtt_credentials.h` with your MQTT broker details:
+   ```cpp
+   #define MQTT_BROKER "192.168.1.100"
+   #define MQTT_PORT 1883
+   #define MQTT_TOPIC "bambu/rfid/uid"
+   ```
+
 ### Pin Configuration
 
-The pin configuration can be modified in `src/main.cpp`:
+The pin configuration can be modified in `src/config.h`:
 - `RST_PIN`: RC522 reset pin (default: GPIO21)
-- `SS_PIN`: RC522 slave select pin (default: GPIO10)
+- `SS_PIN`: RC522 slave select pin (default: GPIO13)
 
 ### Display Settings
 
@@ -125,6 +173,8 @@ Display settings are configured in `platformio.ini` via build flags. The display
 
 - **MFRC522** (v1.4.10+): RFID reader library
 - **TFT_eSPI** (v2.5.43+): TFT display library for ESP32
+- **PubSubClient** (v2.8+): MQTT client library
+- **WiFi**: ESP32 WiFi library
 - **SPI**: Standard Arduino SPI library
 
 ## Troubleshooting
@@ -152,8 +202,9 @@ Display settings are configured in `platformio.ini` via build flags. The display
 
 ## Branches
 
-- **master**: Stable version with serial monitor output only
-- **display-setup**: Version with TFT display support (current development)
+- **master**: Initial version with serial monitor output only
+- **display-setup**: Version with TFT display support
+- **refactor-modules**: Modular code structure with WiFi and MQTT support (current development)
 
 ## Contributing
 
@@ -169,12 +220,27 @@ This project is open source. Feel free to use and modify as needed.
 - [TFT_eSPI](https://github.com/Bodmer/TFT_eSPI) library by Bodmer
 - [MFRC522](https://github.com/miguelbalboa/MFRC522) library by miguelbalboa
 
+## MQTT Data Format
+
+When a tag is scanned, the device publishes the following JSON to the configured MQTT topic:
+
+```json
+{
+  "hex": "04:XX:XX:XX:XX:XX:XX",
+  "decimal": "4:XX:XX:XX:XX:XX:XX",
+  "uid": 1234567890
+}
+```
+
 ## Future Enhancements
 
+- [x] WiFi connectivity for cloud sync
+- [x] MQTT publishing for data integration
+- [x] Modular code structure
+- [ ] OTA (Over-The-Air) updates
 - [ ] Store tag history
 - [ ] Database integration for filament tracking
-- [ ] WiFi connectivity for cloud sync
 - [ ] Touch screen support for navigation
 - [ ] Battery voltage monitoring
-- [ ] Multiple tag format support
+- [ ] Web interface for configuration
 
