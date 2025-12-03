@@ -40,7 +40,8 @@ bool initWiFi(TFT_eSPI* tft) {
     // Show success on display
     if (tft != nullptr) {
       showWiFiConnected(*tft, WiFi.localIP());
-      delay(2000); // Show success message for 2 seconds
+      delay(3000); // Show success message for 3 seconds
+      showWaitingMessage(*tft); // Return to waiting message
     }
     
     return true;
@@ -51,7 +52,8 @@ bool initWiFi(TFT_eSPI* tft) {
     // Show failure on display
     if (tft != nullptr) {
       showWiFiFailed(*tft);
-      delay(2000); // Show failure message for 2 seconds
+      delay(3000); // Show failure message for 3 seconds
+      showWaitingMessage(*tft); // Return to waiting message
     }
     
     return false;
